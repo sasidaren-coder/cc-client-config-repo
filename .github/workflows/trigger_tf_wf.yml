@@ -1,0 +1,20 @@
+name: Trigger TF Workflow
+
+on:
+  push:
+    paths:
+      - 'configs/**'
+
+jobs:
+  dispatch-terraform:
+    name: Dispatch Event to Terraform Repo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send repository_dispatch event
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: sasidaren-coder/github-actions-test
+          event-type: config-updated
+          client-payload: '{"source":"github-config-repo","changed":"configs/"}'
