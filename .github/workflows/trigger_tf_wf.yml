@@ -27,5 +27,5 @@ jobs:
           client-payload: |
             {
               "source":"github-config-repo",
-              "changed_files": ${{ toJson(steps.files.outputs.all_changed_files_json) }}
+              "changed_files": [${{ toJson(steps.files.outputs.all_changed_files) }}]
             }
