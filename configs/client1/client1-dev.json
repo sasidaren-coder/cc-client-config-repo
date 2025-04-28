@@ -11,7 +11,7 @@
   ],
   "serviceaccounts": [
         {
-            "name": "svc11",
+            "name": "svc2",
             "description": "test service account1",
             "operation": [
                 "read"
