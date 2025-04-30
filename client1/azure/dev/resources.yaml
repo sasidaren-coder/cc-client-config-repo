@@ -1,21 +1,10 @@
-{
-  "topics": [
-    {
-      "topic_name": "tp14",
-      "partitions_count": 1,
-      "config": {
-        "cleanup.policy": "delete",
-        "retention.ms": "604800000"
-      }
-    }
-  ],
-  "serviceaccounts": [
-        {
-            "name": "svc14",
-            "description": "test service account1",
-            "operation": [
-                "read"
-            ]
-        }
-    ]
-}
+---
+topics:
+- topic_name: tp15
+  partitions_count: 1
+  config:
+    cleanup.policy: delete
+    retention.ms: '604800000'
+serviceaccounts:
+- name: svc15
+  description: test service account1
