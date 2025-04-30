@@ -52,7 +52,6 @@ jobs:
 
   run-ci-per-path:
     needs: detect-changed-paths
-    if: needs.detect-changed-paths.outputs.matrix != ''
     strategy:
       matrix:
         config_paths: ${{ fromJson(needs.detect-changed-paths.outputs.matrix).config_paths }}
