@@ -38,14 +38,21 @@ jobs:
           echo "Detected paths:"
           echo "$PATHS"
 
+          if [ -z "$PATHS" ]; then
+            echo "No resources.yaml changes found."
+            exit 1
+          fi
+
           JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
 
           echo "Matrix JSON:"
           echo "$JSON_ARRAY"
-          echo "matrix={\"config_paths\": $JSON_ARRAY}" >> $GITHUB_OUTPUT
+          
+          echo "matrix={\"config_paths\":$JSON_ARRAY}" | tee -a $GITHUB_OUTPUT
 
   run-ci-per-path:
     needs: detect-changed-paths
+    if: needs.detect-changed-paths.outputs.matrix != ''
     strategy:
       matrix:
         config_paths: ${{ fromJson(needs.detect-changed-paths.outputs.matrix).config_paths }}
