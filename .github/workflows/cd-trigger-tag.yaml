@@ -1,0 +1,42 @@
+name: CD Trigger Tagged Environment Workflow
+
+on:
+  push:
+    tags:
+      - 'test-*'
+      - 'prod-*'
+
+jobs:
+  detect-tagged-paths:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.setmatrix.outputs.matrix }}
+    steps:
+      - name: Checkout config-repo
+        uses: actions/checkout@v3
+
+      - name: Set matrix from tagged push
+        id: setmatrix
+        run: |
+          git fetch origin HEAD~10
+          PATHS=$(git diff --name-only HEAD~10 | grep 'resources.yaml' | grep -E '/test/|/prod/' | xargs -n1 dirname | sort | uniq)
+
+          if [ -z "$PATHS" ]; then
+            echo "No test/prod resources.yaml changes found."
+            exit 1
+          fi
+
+          JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
+          MATRIX_JSON="{\"config_paths\":$JSON_ARRAY}"
+
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+
+  deploy-tagged:
+    needs: detect-tagged-paths
+    strategy:
+      matrix:
+        config_paths: ${{ fromJson(needs.detect-tagged-paths.outputs.matrix).config_paths }}
+    uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
+    with:
+      tf_action: "apply"
+      config_path: ${{ matrix.config_paths }}
