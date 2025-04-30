@@ -38,7 +38,6 @@ jobs:
             exit 1
           fi
           CONFIG_PATH=$(dirname "$FILE_PATH")
-          echo "Path of the file that has been changed: $(CONFIG_PATH)"
           echo "config_path=$CONFIG_PATH" >> $GITHUB_OUTPUT
 
   call-ci-workflow:
