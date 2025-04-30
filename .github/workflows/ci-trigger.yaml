@@ -27,22 +27,28 @@ jobs:
       - name: Checkout config-repo
         uses: actions/checkout@v3
 
-      - name: Detect config path
-        id: detect-path
+      - name: Set matrix from changed resources.yaml paths
+        id: set-matrix
         run: |
-          echo "Changed files:"
           git fetch origin ${{ github.base_ref }}
-          FILE_PATH=$(git diff --name-only origin/${{ github.base_ref }} | grep 'resources.yaml' | head -n 1)
-          if [[ -z "$FILE_PATH" ]]; then
-            echo "No resources.yaml file was changed."
-            exit 1
-          fi
-          CONFIG_PATH=$(dirname "$FILE_PATH")
-          echo "config_path=$CONFIG_PATH" >> $GITHUB_OUTPUT
+          echo "Finding changed resources.yaml files..."
+          
+          PATHS=$(git diff --name-only origin/${{ github.base_ref }} | grep 'resources.yaml' | xargs -n1 dirname | sort | uniq)
+          
+          echo "Detected paths:"
+          echo "$PATHS"
 
-  call-ci-workflow:
-    needs: detect-config-path
+          JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -s .)
+          echo "Matrix JSON:"
+          echo "$JSON_ARRAY"
+          echo "matrix={\"config_paths\": $JSON_ARRAY}" >> $GITHUB_OUTPUT
+
+  run-ci-per-path:
+    needs: detect-changed-paths
+    strategy:
+      matrix:
+        config_paths: ${{ fromJson(needs.detect-changed-paths.outputs.matrix).config_paths }}
     uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@main
     with:
       tf_action: "plan"
-      config_path: ${{ needs.detect-config-path.outputs.config_path }}
+      config_path: ${{ matrix.config_paths }}
