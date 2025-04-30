@@ -1,10 +1,10 @@
 ---
 topics:
-- topic_name: tp14
+- topic_name: topic1-gcp
   partitions_count: 1
   config:
     cleanup.policy: delete
     retention.ms: '604800000'
 serviceaccounts:
-- name: svc14
+- name: svc1-gcp
   description: test service account1
