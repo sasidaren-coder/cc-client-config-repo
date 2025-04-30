@@ -1,11 +1,44 @@
+# on:
+#   pull_request:
+#     paths:
+#       - '**/resources.yaml'
+
+# jobs:
+#   call-plan:
+#     uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@main
+#     with:
+#       tf_action: "plan"
+#       config_path: "client1/azure/dev"
+
+
+name: CI Trigger Workflow
+
 on:
   pull_request:
     paths:
       - '**/resources.yaml'
 
 jobs:
-  call-plan:
+  detect-config-path:
+    runs-on: ubuntu-latest
+    outputs:
+      config_path: ${{ steps.detect-path.outputs.config_path }}
+    steps:
+      - name: Checkout config-repo
+        uses: actions/checkout@v3
+
+      - name: Detect config path
+        id: detect-path
+        run: |
+          echo "Changed files:"
+          git fetch origin ${{ github.base_ref }}
+          FILE_PATH=$(git diff --name-only origin/${{ github.base_ref }} | grep 'resources.yaml' | head -n 1)
+          CONFIG_PATH=$(dirname "$FILE_PATH")
+          echo "config_path=$CONFIG_PATH" >> $GITHUB_OUTPUT
+
+  call-ci-workflow:
+    needs: detect-config-path
     uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@main
     with:
       tf_action: "plan"
-      config_path: "client1/azure/dev"
+      config_path: ${{ needs.detect-config-path.outputs.config_path }}
