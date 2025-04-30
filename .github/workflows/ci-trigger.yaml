@@ -1,0 +1,11 @@
+on:
+  pull_request:
+    paths:
+      - '**/resources.yaml'
+
+jobs:
+  call-plan:
+    uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yml@main
+    with:
+      tf_action: "plan"
+      config_path: "client1/azure/dev"
