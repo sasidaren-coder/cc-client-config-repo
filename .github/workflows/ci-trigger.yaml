@@ -22,7 +22,7 @@ jobs:
   detect-changed-paths:
     runs-on: ubuntu-latest
     outputs:
-      config_path: ${{ steps.detect-path.outputs.config_path }}
+      config_path: ${{ steps.setmatrix.outputs.config_path }}
     steps:
       - name: Checkout config-repo
         uses: actions/checkout@v3
