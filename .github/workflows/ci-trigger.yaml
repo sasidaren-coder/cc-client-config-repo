@@ -38,7 +38,8 @@ jobs:
           echo "Detected paths:"
           echo "$PATHS"
 
-          JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -s .)
+          JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
+
           echo "Matrix JSON:"
           echo "$JSON_ARRAY"
           echo "matrix={\"config_paths\": $JSON_ARRAY}" >> $GITHUB_OUTPUT
