@@ -19,7 +19,7 @@ on:
       - '**/resources.yaml'
 
 jobs:
-  detect-config-path:
+  detect-changed-path:
     runs-on: ubuntu-latest
     outputs:
       config_path: ${{ steps.detect-path.outputs.config_path }}
