@@ -44,11 +44,16 @@ jobs:
           fi
 
           JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
+          MATRIX_JSON="{\"config_paths\":$JSON_ARRAY}"
 
           echo "Matrix JSON:"
-          echo "$JSON_ARRAY"
+          echo "$MATRIX_JSON"
           
-          echo "matrix={\"config_paths\":$JSON_ARRAY}" | tee -a $GITHUB_OUTPUT
+          {
+            echo "matrix<<EOF"
+            echo "$MATRIX_JSON"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
   run-ci-per-path:
     needs: detect-changed-paths
