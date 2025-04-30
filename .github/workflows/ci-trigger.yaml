@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set matrix from changed resources.yaml paths
-        id: set-matrix
+        id: setmatrix
         run: |
           git fetch origin ${{ github.base_ref }}
           echo "Finding changed resources.yaml files..."
@@ -49,11 +49,7 @@ jobs:
           echo "Matrix JSON:"
           echo "$MATRIX_JSON"
           
-          {
-            echo "matrix<<EOF"
-            echo "$MATRIX_JSON"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
   run-ci-per-path:
     needs: detect-changed-paths
