@@ -5,38 +5,30 @@ on:
     tags:
       - 'test-*'
       - 'prod-*'
+      - 'client*-*-(test|prod)-*'
 
 jobs:
-  detect-tagged-paths:
+  deploy-tagged:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.setmatrix.outputs.matrix }}
     steps:
-      - name: Checkout config-repo
-        uses: actions/checkout@v3
-
-      - name: Set matrix from tagged push
-        id: setmatrix
+      - name: Parse tag and extract config path
+        id: extract
         run: |
-          git fetch origin HEAD~10
-          PATHS=$(git diff --name-only HEAD~10 | grep 'resources.yaml' | grep -E '/test/|/prod/' | xargs -n1 dirname | sort | uniq)
+          TAG_NAME="${GITHUB_REF##refs/tags/}"
 
-          if [ -z "$PATHS" ]; then
-            echo "No test/prod resources.yaml changes found."
+          # Expecting tags like: client1-azure-test-v1
+          IFS='-' read -r CLIENT CLOUD ENVIRONMENT _ <<< "$TAG_NAME"
+
+          if [[ -z "$CLIENT" || -z "$CLOUD" || -z "$ENVIRONMENT" ]]; then
+            echo "Invalid tag format. Must be: <client>-<cloud>-<env>-<version>"
             exit 1
           fi
 
-          JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
-          MATRIX_JSON="{\"config_paths\":$JSON_ARRAY}"
+          CONFIG_PATH="$CLIENT/$CLOUD/$ENVIRONMENT"
+          echo "config_path=$CONFIG_PATH" >> $GITHUB_OUTPUT
 
-          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
-
-  deploy-tagged:
-    needs: detect-tagged-paths
-    strategy:
-      matrix:
-        config_paths: ${{ fromJson(needs.detect-tagged-paths.outputs.matrix).config_paths }}
-    uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
-    with:
-      tf_action: "apply"
-      config_path: ${{ matrix.config_paths }}
+      - name: Trigger CD Apply
+        uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
+        with:
+          tf_action: "apply"
+          config_path: ${{ steps.extract.outputs.config_path }}

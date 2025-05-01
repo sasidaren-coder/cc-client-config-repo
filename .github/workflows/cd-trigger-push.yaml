@@ -14,15 +14,14 @@ jobs:
       - name: Checkout config-repo
         uses: actions/checkout@v3
 
-      - name: Set matrix only for dev env
+      - name: Set matrix only for dev env (on merge)
         id: setmatrix
         run: |
-          git fetch origin HEAD~10
-          PATHS=$(git diff --name-only origin/main | grep 'resources.yaml' | grep '/dev/' | xargs -n1 dirname | sort | uniq)
+          PATHS=$(git diff --name-only HEAD~1 HEAD | grep 'resources.yaml' | grep '/dev/' | xargs -n1 dirname | sort | uniq)
 
           if [ -z "$PATHS" ]; then
             echo "No dev resources.yaml changes found."
-            exit 1
+            exit 0
           fi
 
           JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
