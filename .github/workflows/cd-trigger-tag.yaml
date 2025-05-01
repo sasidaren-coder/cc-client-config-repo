@@ -8,11 +8,13 @@ on:
       - 'client*-*-(test|prod)-*'
 
 jobs:
-  deploy-tagged:
+  extract-config-path:
     runs-on: ubuntu-latest
+    outputs:
+      config_path: ${{ steps.setpath.outputs.config_path }}
     steps:
       - name: Parse tag and extract config path
-        id: extract
+        id: setpath
         run: |
           TAG_NAME="${GITHUB_REF##refs/tags/}"
 
@@ -25,10 +27,12 @@ jobs:
           fi
 
           CONFIG_PATH="$CLIENT/$CLOUD/$ENVIRONMENT"
+          echo "Deploying for path: $CONFIG_PATH"
           echo "config_path=$CONFIG_PATH" >> $GITHUB_OUTPUT
 
-      - name: Trigger CD Apply
-        uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
-        with:
-          tf_action: "apply"
-          config_path: ${{ steps.extract.outputs.config_path }}
+  deploy-tagged:
+    needs: extract-config-path
+    uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
+    with:
+      tf_action: "apply"
+      config_path: ${{ needs.extract-config-path.outputs.config_path }}
