@@ -37,3 +37,4 @@ jobs:
     with:
       tf_action: "apply"
       config_path: ${{ needs.extract-config-path.outputs.config_path }}
+    secrets: inherit
