@@ -40,3 +40,4 @@ jobs:
     with:
       tf_action: "apply"
       config_path: ${{ matrix.config_paths }}
+    secrets: inherit
