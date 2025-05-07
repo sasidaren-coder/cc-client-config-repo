@@ -60,3 +60,4 @@ jobs:
     with:
       tf_action: "plan"
       config_path: ${{ matrix.config_paths }}
+    secrets: inherit
