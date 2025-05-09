@@ -1,7 +1,7 @@
 {
   "topics": [
     {
-      "topic_name": "tp22-az",
+      "topic_name": "tp23-dev-az",
       "partitions_count": 1,
       "config": {
         "cleanup.policy": "delete",
@@ -11,7 +11,7 @@
   ],
   "serviceaccounts": [
         {
-            "name": "svc22-az",
+            "name": "svc23-dev-az",
             "description": "test service account1",
             "operation": [
                 "read"
