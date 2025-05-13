@@ -1,10 +1,10 @@
 ---
 topics:
-- topic_name: tp29-dev-az1
+- topic_name: tp30-dev-az1
   partitions_count: 1
   config:
     cleanup.policy: delete
     retention.ms: '604800000'
 serviceaccounts:
-- name: svc29-dev-az1
+- name: svc30-dev-az1
   description: test service account1
