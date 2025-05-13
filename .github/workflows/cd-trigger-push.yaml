@@ -29,6 +29,9 @@ jobs:
           JSON_ARRAY=$(printf '%s\n' $PATHS | jq -R . | jq -cs .)
           MATRIX_JSON="{\"config_paths\":$JSON_ARRAY}"
 
+          echo "Matrix JSON:"
+          echo "$MATRIX_JSON"
+
           echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
   deploy-dev:
