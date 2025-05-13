@@ -1,21 +1,10 @@
-{
-  "topics": [
-    {
-      "topic_name": "tp23-dev-az",
-      "partitions_count": 1,
-      "config": {
-        "cleanup.policy": "delete",
-        "retention.ms": "604800000"
-      }
-    }
-  ],
-  "serviceaccounts": [
-        {
-            "name": "svc23-dev-az",
-            "description": "test service account1",
-            "operation": [
-                "read"
-            ]
-        }
-    ]
-}
+---
+topics:
+- topic_name: tp24-dev-az1
+  partitions_count: 1
+  config:
+    cleanup.policy: delete
+    retention.ms: '604800000'
+serviceaccounts:
+- name: svc24-dev-az1
+  description: test service account1
