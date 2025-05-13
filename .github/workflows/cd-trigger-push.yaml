@@ -43,5 +43,5 @@ jobs:
     with:
       tf_action: "apply"
       config_path: ${{ matrix.config_paths }}
-      iac_release_tag: ${{ vars.IAC_TAG }}
+      iac_release_tag: "release1"
     secrets: inherit
