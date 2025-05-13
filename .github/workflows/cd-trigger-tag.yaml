@@ -33,8 +33,9 @@ jobs:
 
   deploy-tagged:
     needs: extract-config-path
-    uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@main
+    uses: sasidaren-coder/github-actions-test/.github/workflows/cd-workflow.yaml@release1
     with:
       tf_action: "apply"
       config_path: ${{ needs.extract-config-path.outputs.config_path }}
+      iac_release_tag: "release1"
     secrets: inherit

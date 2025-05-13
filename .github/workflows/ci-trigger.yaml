@@ -56,8 +56,9 @@ jobs:
     strategy:
       matrix:
         config_paths: ${{ fromJson(needs.detect-changed-paths.outputs.matrix).config_paths }}
-    uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@main
+    uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@release1
     with:
       tf_action: "plan"
       config_path: ${{ matrix.config_paths }}
+      iac_release_tag: "release1"
     secrets: inherit
