@@ -56,7 +56,7 @@ jobs:
     strategy:
       matrix:
         config_paths: ${{ fromJson(needs.detect-changed-paths.outputs.matrix).config_paths }}
-    uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@${{ vars.IAC_TAG }}
+    uses: sasidaren-coder/github-actions-test/.github/workflows/ci-workflow.yaml@release1
     with:
       tf_action: "plan"
       config_path: ${{ matrix.config_paths }}
